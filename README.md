@@ -14,7 +14,7 @@ Guía y examen práctico interactivo para el **Certified Kubernetes Administrato
 - **Terminal simulada**: `kubectl` (get/describe/create/apply/edit/patch/replace/expose/scale/set/rollout/label/taint/drain/logs/exec/top/auth can-i/explain…), `ssh`, `sudo`, `systemctl`, `journalctl`, `kubeadm`, `apt-get`/`apt-mark`, `dpkg`, `sysctl`, `etcdctl`/`etcdutl`, `helm`, `crictl`, `curl`/`wget`, tuberías, redirecciones, heredocs, variables (`$do`), alias y un editor estilo vim (`vim archivo.yaml`, `kubectl edit`).
 - **Coach**: después de cada instrucción explica errores, sugiere atajos y avisa qué requisito se cumplió o se rompió.
 - **Simulacro**: 17 tareas al azar con la proporción real de dominios, 2 horas, calificación con crédito parcial y umbral de 66 %.
-- **Quiz** conceptual (54 preguntas) y **chuleta** con los comandos clave.
+- **Quiz** conceptual (57 preguntas) y **chuleta** con los comandos clave.
 
 El progreso (tareas resueltas, plan, simulacros) se guarda en `localStorage` del navegador.
 
