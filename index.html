@@ -9,6 +9,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="css/app.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kubelab CKA">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2l12 6v16l-12 6-12-6V8z' fill='%232f63d8'/%3E%3Cpath d='M16 9v14M9 13l14 6M23 13L9 19' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -115,6 +122,10 @@
 <!-- Espacio de trabajo reutilizable (laboratorio y simulacro) -->
 <template id="workspace-tpl">
   <div class="workspace">
+    <div class="pane-switch" role="tablist" aria-label="Panel">
+      <button class="pane-btn" data-pane="task" aria-selected="true">Pregunta <span class="pane-score"></span></button>
+      <button class="pane-btn" data-pane="term" aria-selected="false">Terminal</button>
+    </div>
     <aside class="task-pane">
       <div class="task-nav">
         <select class="task-select" aria-label="Tarea"></select>
@@ -158,8 +169,34 @@
         <div class="term-out" aria-live="polite"></div>
         <div class="term-input-row">
           <span class="prompt"></span>
-          <textarea class="term-input" rows="1" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Comando"></textarea>
+          <textarea class="term-input" rows="1" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" enterkeyhint="send" aria-label="Comando"></textarea>
         </div>
+      </div>
+      <div class="qkeys" aria-label="Teclas rápidas">
+        <button class="run-btn" data-act="run" aria-label="Ejecutar">↵ Ejecutar</button>
+        <button data-act="tab">Tab</button>
+        <button data-act="up">↑</button>
+        <button data-act="down">↓</button>
+        <button data-act="ctrlc">Ctrl+C</button>
+        <button data-ins="k ">k</button>
+        <button data-ins="kubectl get pods -A">get pods -A</button>
+        <button data-ins="kubectl get nodes">get nodes</button>
+        <button data-ins=" -n ">-n</button>
+        <button data-ins=" -o yaml">-o yaml</button>
+        <button data-ins=' $do'>$do</button>
+        <button data-ins=" | grep ">| grep</button>
+        <button data-ins=" > ">&gt;</button>
+        <button data-ins="kubectl describe ">describe</button>
+        <button data-ins="kubectl apply -f ">apply -f</button>
+        <button data-ins="sudo -i">sudo -i</button>
+        <button data-ins="exit">exit</button>
+        <button data-ins="-">-</button>
+        <button data-ins="/">/</button>
+        <button data-ins="=">=</button>
+        <button data-ins=":">:</button>
+        <button data-ins="~">~</button>
+        <button data-ins="&quot;">"</button>
+        <button data-ins="'">'</button>
       </div>
       <div class="editor" hidden>
         <div class="ed-head"><span class="ed-title"></span><span class="ed-help">Esc → <b>:wq</b> guardar · <b>:q!</b> salir · Ctrl+S guardar · Tab = 2 espacios</span></div>

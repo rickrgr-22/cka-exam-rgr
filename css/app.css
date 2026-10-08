@@ -291,12 +291,48 @@ td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; whit
   .plan-hero, .plan-grid { grid-template-columns: minmax(0, 1fr); }
   .plan-side { position: static; }
 }
+.pane-switch { display: none; }
+.qkeys { display: none; }
 @media (max-width: 860px) {
-  .workspace { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(420px, 70vh); overflow-y: auto; }
-  .task-pane { border-right: 0; border-bottom: 1px solid var(--line); }
-  .task-scroll { max-height: none; overflow: visible; }
-  #lab-slot, #exam-slot { overflow-y: auto; }
+  html, body { height: 100%; overflow: hidden; }
+  body { height: 100dvh; }
+  .topbar { flex-wrap: nowrap; padding: .4rem 12px; gap: .5rem; }
+  .brand-text { display: none; }
+  .tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; justify-content: space-around; background: var(--surface); border-top: 1px solid var(--line); padding: .3rem 6px calc(.3rem + env(safe-area-inset-bottom, 0px)); }
+  .tab { flex: 1; padding: .55rem .2rem; font-size: .82rem; text-align: center; }
+  .top-right { margin-left: auto; }
+  main { padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px)); min-height: 0; overflow: hidden; }
+  .view { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  #view-lab, #view-exam { overflow: hidden; }
+  .workspace { display: flex; flex-direction: column; min-height: 0; min-width: 0; width: 100%; }
+  #lab-slot, #exam-slot, .term-pane, .task-pane { min-width: 0; max-width: 100%; }
+  .pane-switch { display: flex; gap: 4px; padding: 6px 12px; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .pane-btn { flex: 1; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font: 600 .9rem var(--font-body); padding: .5rem; border-radius: 8px; }
+  .pane-btn[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .pane-score { font: 500 .75rem var(--font-mono); opacity: .85; }
+  .task-pane, .term-pane { flex: 1; min-height: 0; border: 0; }
+  .workspace:not(.show-term) .term-pane { display: none; }
+  .workspace.show-term .task-pane { display: none; }
+  .task-nav { padding: .5rem 12px; }
+  .task-scroll { padding: .8rem 12px 1.5rem; }
+  .term { padding: .6rem 10px .8rem; font-size: 12.5px; }
+  .term-input, .ed-text, .ed-cmdline, .task-select, select, input { font-size: 16px; }
+  .term-head { padding: .35rem 10px; }
+  .term-head .dots { display: none; }
+  .qkeys { display: flex; gap: 6px; overflow-x: auto; padding: 6px 8px; background: var(--term-head); border-top: 1px solid rgba(255,255,255,.06); scrollbar-width: none; }
+  .qkeys::-webkit-scrollbar { display: none; }
+  .qkeys button { flex: none; font: 500 13px var(--font-mono); color: var(--term-fg); background: #1a2945; border: 1px solid #2a3c5e; border-radius: 7px; padding: .45rem .65rem; white-space: nowrap; }
+  .qkeys .run-btn { background: var(--term-prompt); color: #06231a; border-color: var(--term-prompt); font-weight: 700; }
+  .ed-help { display: none; }
+  .ed-gutter { display: none; }
+  .ed-text { font-size: 14px; }
+  .exam-bar { padding: .35rem 12px; gap: .5rem; }
+  .exam-q { flex-wrap: nowrap; overflow-x: auto; }
+  .qbtn { flex: none; }
+  #lab-slot, #exam-slot { min-height: 0; }
   .hero-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .plan-hero { gap: 1rem; }
+  .sol-step pre { font-size: .74rem; }
 }
 @media (max-width: 520px) {
   .brand-text span { display: none; }

@@ -1,0 +1,17 @@
+{
+  "name": "Kubelab CKA",
+  "short_name": "Kubelab CKA",
+  "description": "Guía y examen práctico CKA con terminal simulada.",
+  "start_url": "./#plan",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a1220",
+  "theme_color": "#0a1220",
+  "lang": "es",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

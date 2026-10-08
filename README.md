@@ -4,6 +4,8 @@ Guía y examen práctico interactivo para el **Certified Kubernetes Administrato
 
 **Abrir la app:** https://rickrgr-22.github.io/cka-exam-rgr/ (o abre `index.html` localmente; no requiere instalación).
 
+**En el celular:** ábrela en Safari (iPhone) o Chrome (Android) y usa *Compartir → Agregar a pantalla de inicio* / *Instalar app*. Se abre a pantalla completa, funciona sin conexión después de la primera visita, y el laboratorio alterna entre **Pregunta** y **Terminal** con una barra de teclas rápidas (Ejecutar, Tab, ↑/↓, Ctrl+C, `k`, `-n`, `$do`, `| grep`…).
+
 ## Qué incluye
 
 - **Plan de estudio** del martes 29 de septiembre al sábado 3 de octubre de 2026 (~18 h), con bloques marcables, avance por dominio y cuenta regresiva.

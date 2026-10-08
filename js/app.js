@@ -4,6 +4,8 @@
   const TASKS = CKA.tasks.list;
   const DOM = CKA.tasks.DOMAINS;
   const byId = (id) => TASKS.find((t) => t.id === id);
+  const mobileMQ = window.matchMedia('(max-width: 860px)');
+  const isMobile = () => mobileMQ.matches;
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 
@@ -47,7 +49,7 @@
   function renderCountdown() {
     const ms = examDeadline() - Date.now();
     const el = $('#countdown');
-    if (ms <= 0) { el.textContent = '¡Hoy es el examen!'; return; }
+    if (ms <= 0) { el.textContent = ms > -86400000 ? '¡Hoy es el examen!' : 'Práctica libre'; return; }
     const d = Math.floor(ms / 86400000); const h = Math.floor((ms % 86400000) / 3600000); const m = Math.floor((ms % 3600000) / 60000);
     el.textContent = 'Examen en ' + (d ? d + ' d ' : '') + h + ' h ' + String(m).padStart(2, '0') + ' m';
   }
@@ -106,7 +108,29 @@
       this.q('.prev-task').addEventListener('click', () => this.step(-1));
       this.q('.next-task').addEventListener('click', () => this.step(1));
       this.q('.toggle-es').addEventListener('click', () => { const p = this.q('.es-summary'); p.hidden = !p.hidden; this.q('.toggle-es').textContent = p.hidden ? 'Ver resumen en español' : 'Ocultar resumen'; });
-      this.q('.copy-host').addEventListener('click', () => { this.input.value = 'ssh ' + this.task().host; this.focus(); });
+      this.q('.copy-host').addEventListener('click', () => { this.input.value = 'ssh ' + this.task().host; this.setPane('term'); this.focus(true); });
+      this.el.querySelectorAll('.pane-btn').forEach((b) => b.addEventListener('click', () => { this.setPane(b.dataset.pane); if (b.dataset.pane === 'term') this.focus(true); }));
+      this.q('.qkeys').addEventListener('pointerdown', (e) => { if (e.target.closest('button')) e.preventDefault(); });
+      this.q('.qkeys').addEventListener('click', (e) => {
+        const b = e.target.closest('button'); if (!b) return;
+        e.preventDefault();
+        const ta = this.input;
+        if (b.dataset.ins != null) {
+          const ins = b.dataset.ins;
+          const full = /^(kubectl|sudo|exit)/.test(ins);
+          if (full && !ta.value.trim()) ta.value = ins + (ins.endsWith(' ') || ins === 'sudo -i' || ins === 'exit' || /pods -A|nodes$/.test(ins) ? '' : ' ');
+          else { const st = ta.selectionStart; ta.value = ta.value.slice(0, st) + ins + ta.value.slice(ta.selectionEnd); ta.setSelectionRange(st + ins.length, st + ins.length); }
+          this.autosize(); ta.focus({ preventScroll: true }); return;
+        }
+        const key = { run: 'Enter', tab: 'Tab', up: 'ArrowUp', down: 'ArrowDown' }[b.dataset.act];
+        if (b.dataset.act === 'run') { const v = ta.value; ta.value = ''; this.autosize(); this.run(v); return; }
+        if (b.dataset.act === 'ctrlc') { this.onKey({ key: 'c', ctrlKey: true, preventDefault() {} }); return; }
+        this.onKey({ key, shiftKey: false, preventDefault() {} });
+        ta.focus({ preventScroll: true });
+      });
+      this.input.addEventListener('beforeinput', (e) => {
+        if (e.inputType === 'insertLineBreak' && !this.needsMore(this.input.value)) { e.preventDefault(); const v = this.input.value; this.input.value = ''; this.autosize(); this.run(v); }
+      });
       this.q('.hint-btn').addEventListener('click', () => this.showHint());
       this.q('.sol-btn').addEventListener('click', () => this.showSolution());
       this.q('.reset-btn').addEventListener('click', () => this.resetTask());
@@ -188,6 +212,7 @@
       this.renderOut();
       this.renderPrompt();
       this.q('.task-scroll').scrollTop = 0;
+      if (isMobile()) this.setPane('task');
       this.focus();
     }
 
@@ -205,6 +230,7 @@
       }
       ul.innerHTML = s.checks.map((c) => '<li class="' + (c.ok ? 'ok' : 'pending') + '">' + md(c.t) + '</li>').join('');
       this.q('.checks-score').textContent = s.checks.filter((c) => c.ok).length + '/' + s.checks.length;
+      this.q('.pane-score').textContent = s.checks.filter((c) => c.ok).length + '/' + s.checks.length;
     }
 
     renderHints() {
@@ -228,7 +254,7 @@
         steps.map((st, i) => '<div class="sol-step"><pre>' + esc(st) + '</pre><button class="mini" data-step="' + i + '">Pegar</button></div>').join('') +
         '<div class="explain">' + md(t.explain) + '</div>' +
         '<div class="docs">' + t.docs.map((d) => '<a href="' + esc(d) + '" target="_blank" rel="noopener">' + esc(d.replace(/^https:\/\//, '')) + '</a>').join('') + '</div>';
-      box.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => { this.input.value = steps[+b.dataset.step]; this.autosize(); this.focus(); }));
+      box.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => { this.input.value = steps[+b.dataset.step]; this.autosize(); this.setPane('term'); this.focus(true); }));
     }
     showSolution() {
       const s = this.sess();
@@ -269,7 +295,16 @@
       this.scroll();
     }
     scroll() { const t = this.q('.term'); t.scrollTop = t.scrollHeight; }
-    focus() { if (this.editorEl.hidden) this.input.focus({ preventScroll: true }); }
+    focus(force) {
+      if (!this.editorEl.hidden) return;
+      if (isMobile() && (!force || !this.el.classList.contains('show-term'))) return;
+      this.input.focus({ preventScroll: true });
+    }
+    setPane(p) {
+      this.el.classList.toggle('show-term', p === 'term');
+      this.el.querySelectorAll('.pane-btn').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.pane === p)));
+      if (p === 'term') this.scroll();
+    }
     autosize() { this.input.rows = Math.min(14, Math.max(1, this.input.value.split('\n').length)); }
 
     needsMore(text) {
@@ -375,6 +410,7 @@
       this.q('.ed-cmdline').value = '';
       this.edMsg('');
       this.edGutter();
+      this.setPane('term');
       this.edInsert();
       ta.setSelectionRange(0, 0);
       ta.scrollTop = 0;
@@ -698,4 +734,5 @@
 
   // ================================================================ inicio
   show((location.hash || '#plan').slice(1));
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 })(window.CKA);
